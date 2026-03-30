@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Practice — CodeTrack{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h2>🧑‍💻 Practice Session</h2>
+    <a href="{{ url_for('dashboard') }}" class="btn-outline">← Dashboard</a>
+  </div>
+
+  {% if challenge %}
+  <div class="challenge-banner">
+    <div>
+      <strong>{{ challenge.title }}</strong>
+      <span class="badge badge-{{ challenge.difficulty|lower }}">{{ challenge.difficulty }}</span>
+    </div>
+    <p>{{ challenge.description }}</p>
+  </div>
+  {% endif %}
+
+  <div class="practice-layout">
+    <div class="editor-panel">
+      <div class="editor-toolbar">
+        <span class="editor-label">Python Editor</span>
+        <button id="runBtn" class="btn-run">▶ Run Code</button>
+      </div>
+      <textarea id="codeEditor" class="code-editor" spellcheck="false">{% if challenge and challenge.starter_code %}{{ challenge.starter_code }}{% else %}# Write your Python code here
+print("Hello, CodeTrack!"){% endif %}</textarea>
+      <div class="output-panel">
+        <div class="output-label">Output</div>
+        <pre id="output" class="output-box">Run your code to see output here...</pre>
+      </div>
+    </div>
+
+    <div class="session-panel">
+      <h3>Save This Session</h3>
+      <div class="form-group">
+        <label>Topic / Problem Name</label>
+        <input type="text" id="topic" placeholder="e.g. Binary Search, Loops..." value="{% if challenge %}{{ challenge.title }}{% endif %}"/>
+      </div>
+      <div class="form-group">
+        <label>Difficulty</label>
+        <select id="difficulty">
+          <option value="Easy">Easy</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="status">
+          <option value="To Do">To Do</option>
+          <option value="Attempted">Attempted</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Time Spent (minutes)</label>
+        <input type="number" id="timeSpent" min="0" value="0"/>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes" placeholder="What did you learn? Any tricks?"></textarea>
+      </div>
+      <button id="saveBtn" class="btn-primary" style="width:100%">💾 Save Session</button>
+      <div id="saveMsg" class="save-msg"></div>
+    </div>
+  </div>
+</div>
+<script>
+  const CHALLENGE_ID = {% if challenge %}"{{ challenge.id }}"{% else %}null{% endif %};
+</script>
+<script src="{{ url_for('static', filename='js/practice.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Login — CodeTrack{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">{ }</div>
+      <h1>CodeTrack</h1>
+      <p>Track your Python practice journey</p>
+    </div>
+    {% if registered %}
+    <div class="alert alert-success">✅ Account created! You can now log in.</div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-error">⚠ {{ error }}</div>
+    {% endif %}
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Enter your username" required autofocus/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter your password" required/>
+      </div>
+      <button type="submit" class="btn-primary">Login →</button>
+    </form>
+    <p class="auth-switch">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+  </div>
+  <div class="auth-visual">
+    <div class="code-snippet">
+      <span class="cs-line"><span class="cs-kw">def</span> <span class="cs-fn">track_progress</span>():</span>
+      <span class="cs-line">  problems = <span class="cs-num">0</span></span>
+      <span class="cs-line">  <span class="cs-kw">while</span> <span class="cs-bool">True</span>:</span>
+      <span class="cs-line">    practice()</span>
+      <span class="cs-line">    problems += <span class="cs-num">1</span></span>
+      <span class="cs-line">    <span class="cs-kw">if</span> problems > <span class="cs-num">100</span>:</span>
+      <span class="cs-line">      <span class="cs-kw">break</span></span>
+      <span class="cs-line">  <span class="cs-kw">return</span> <span class="cs-str">"🏆 Pro!"</span></span>
+    </div>
+  </div>
+</div>
+{% endblock %}

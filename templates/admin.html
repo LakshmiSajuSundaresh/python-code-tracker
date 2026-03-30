@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Admin — CodeTrack{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h2>🛠 Admin Panel</h2>
+    <span class="badge badge-admin">Admin</span>
+  </div>
+
+  <!-- Add Challenge Form -->
+  <div class="section">
+    <h3 class="section-title">➕ Add New Challenge</h3>
+    <form method="POST" action="{{ url_for('add_challenge') }}" class="admin-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" name="title" placeholder="e.g. Reverse a String" required/>
+        </div>
+        <div class="form-group">
+          <label>Difficulty</label>
+          <select name="difficulty">
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" placeholder="Describe the problem..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Starter Code (optional)</label>
+        <textarea name="starter_code" class="code-editor-sm" placeholder="# Write starter code here..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary">Add Challenge</button>
+    </form>
+  </div>
+
+  <!-- Existing Challenges -->
+  <div class="section">
+    <h3 class="section-title">📋 All Challenges ({{ challenges|length }})</h3>
+    {% if challenges %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr><th>Title</th><th>Difficulty</th><th>Description</th><th>Delete</th></tr>
+        </thead>
+        <tbody>
+          {% for c in challenges %}
+          <tr>
+            <td><strong>{{ c.title }}</strong></td>
+            <td><span class="badge badge-{{ c.difficulty|lower }}">{{ c.difficulty }}</span></td>
+            <td>{{ c.description[:80] }}...</td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_challenge', cid=c.id) }}" onsubmit="return confirm('Delete this challenge?')">
+                <button type="submit" class="btn-delete">✕ Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><p>No challenges yet. Add one above!</p></div>
+    {% endif %}
+  </div>
+
+  <!-- Users -->
+  <div class="section">
+    <h3 class="section-title">👥 Registered Users ({{ users|length }})</h3>
+    {% if users %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr><th>Username</th><th>Sessions Logged</th></tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.session_count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><p>No users registered yet.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

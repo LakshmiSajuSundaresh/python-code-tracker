@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Register — CodeTrack{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">{ }</div>
+      <h1>Create Account</h1>
+      <p>Join CodeTrack and start practicing</p>
+    </div>
+    {% if error %}
+    <div class="alert alert-error">⚠ {{ error }}</div>
+    {% endif %}
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Choose a unique username" required autofocus/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create a password" required/>
+      </div>
+      <button type="submit" class="btn-primary">Create Account →</button>
+    </form>
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+  </div>
+  <div class="auth-visual">
+    <div class="code-snippet">
+      <span class="cs-line"><span class="cs-kw">def</span> <span class="cs-fn">register</span>(user):</span>
+      <span class="cs-line">  <span class="cs-kw">if</span> user.is_unique():</span>
+      <span class="cs-line">    db.save(user)</span>
+      <span class="cs-line">    <span class="cs-kw">return</span> <span class="cs-str">"Welcome!"</span></span>
+      <span class="cs-line">  <span class="cs-kw">else</span>:</span>
+      <span class="cs-line">    <span class="cs-kw">raise</span> Error(</span>
+      <span class="cs-line">      <span class="cs-str">"Name taken"</span></span>
+      <span class="cs-line">    )</span>
+    </div>
+  </div>
+</div>
+{% endblock %}

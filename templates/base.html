@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}CodeTrack{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  {% if session.user_id %}
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">{ }</span>
+      <span class="brand-text">CodeTrack</span>
+    </div>
+    <div class="nav-links">
+      {% if session.is_admin %}
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Panel</a>
+      {% else %}
+        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('practice') }}" class="nav-link">Practice</a>
+      {% endif %}
+      <span class="nav-user">👤 {{ session.username }}</span>
+      <a href="{{ url_for('logout') }}" class="nav-logout">Logout</a>
+    </div>
+  </nav>
+  {% endif %}
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
