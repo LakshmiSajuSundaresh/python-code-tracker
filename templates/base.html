@@ -17,13 +17,13 @@
     </div>
     <div class="nav-links">
       {% if session.is_admin %}
-        <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Admin Panel</a>
+        <a href="{{ url_for('main.admin_dashboard') }}" class="nav-link">Admin Panel</a>
       {% else %}
-        <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
-        <a href="{{ url_for('practice') }}" class="nav-link">Practice</a>
+        <a href="{{ url_for('main.dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('main.practice') }}" class="nav-link">Practice</a>
       {% endif %}
       <span class="nav-user">👤 {{ session.username }}</span>
-      <a href="{{ url_for('logout') }}" class="nav-logout">Logout</a>
+      <a href="{{ url_for('main.logout') }}" class="nav-logout">Logout</a>
     </div>
   </nav>
   {% endif %}

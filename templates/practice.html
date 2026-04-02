@@ -3,8 +3,8 @@
 {% block content %}
 <div class="page-container">
   <div class="page-header">
-    <h2>🧑‍💻 Practice Session</h2>
-    <a href="{{ url_for('dashboard') }}" class="btn-outline">← Dashboard</a>
+    <h2>{% if resume_session %}▶ Resume Session{% else %}🧑‍💻 Practice Session{% endif %}</h2>
+    <a href="{{ url_for('main.dashboard') }}" class="btn-outline">← Dashboard</a>
   </div>
 
   {% if challenge %}
@@ -17,13 +17,19 @@
   </div>
   {% endif %}
 
+  {% if resume_session %}
+  <div class="resume-banner">
+    ▶ Resuming: <strong>{{ resume_session.topic }}</strong> — timer continues from where you left off ({{ resume_session.time_spent }} min already logged)
+  </div>
+  {% endif %}
+
   <div class="practice-layout">
     <div class="editor-panel">
       <div class="editor-toolbar">
         <span class="editor-label">Python Editor</span>
         <button id="runBtn" class="btn-run">▶ Run Code</button>
       </div>
-      <textarea id="codeEditor" class="code-editor" spellcheck="false">{% if challenge and challenge.starter_code %}{{ challenge.starter_code }}{% else %}# Write your Python code here
+      <textarea id="codeEditor" class="code-editor" spellcheck="false">{% if resume_session and resume_session.code %}{{ resume_session.code }}{% elif challenge and challenge.starter_code %}{{ challenge.starter_code }}{% else %}# Write your Python code here
 print("Hello, CodeTrack!"){% endif %}</textarea>
       <div class="output-panel">
         <div class="output-label">Output</div>
@@ -32,43 +38,53 @@ print("Hello, CodeTrack!"){% endif %}</textarea>
     </div>
 
     <div class="session-panel">
-      <h3>Save This Session</h3>
+      <h3>{% if resume_session %}Update Session{% else %}Save This Session{% endif %}</h3>
       <div class="form-group">
         <label>Topic / Problem Name</label>
-        <input type="text" id="topic" placeholder="e.g. Binary Search, Loops..." value="{% if challenge %}{{ challenge.title }}{% endif %}"/>
+        <input type="text" id="topic" placeholder="e.g. Binary Search, Loops..."
+          value="{% if resume_session %}{{ resume_session.topic }}{% elif challenge %}{{ challenge.title }}{% endif %}"/>
       </div>
       <div class="form-group">
         <label>Difficulty</label>
         <select id="difficulty">
-          <option value="Easy">Easy</option>
-          <option value="Medium" selected>Medium</option>
-          <option value="Hard">Hard</option>
+          <option value="Easy" {% if resume_session and resume_session.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+          <option value="Medium" {% if not resume_session or resume_session.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+          <option value="Hard" {% if resume_session and resume_session.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
         </select>
       </div>
       <div class="form-group">
         <label>Status</label>
         <select id="status">
-          <option value="To Do">To Do</option>
-          <option value="Attempted">Attempted</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
+          <option value="To Do" {% if resume_session and resume_session.status == 'To Do' %}selected{% endif %}>To Do</option>
+          <option value="Attempted" {% if resume_session and resume_session.status == 'Attempted' %}selected{% endif %}>Attempted</option>
+          <option value="In Progress" {% if resume_session and resume_session.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+          <option value="Completed" {% if resume_session and resume_session.status == 'Completed' %}selected{% endif %}>Completed</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Time Spent (minutes)</label>
-        <input type="number" id="timeSpent" min="0" value="0"/>
+        <label>Session Timer</label>
+        <div class="timer-display">
+          <span class="timer-icon">⏱</span>
+          <span id="timerDisplay" class="timer-value">00:00</span>
+          <span class="timer-note">Auto-stops on save</span>
+        </div>
       </div>
       <div class="form-group">
         <label>Notes</label>
-        <textarea id="notes" placeholder="What did you learn? Any tricks?"></textarea>
+        <textarea id="notes" placeholder="What did you learn? Any tricks?">{% if resume_session %}{{ resume_session.notes or '' }}{% endif %}</textarea>
       </div>
-      <button id="saveBtn" class="btn-primary" style="width:100%">💾 Save Session</button>
+      <button id="saveBtn" class="btn-primary" style="width:100%">
+        {% if resume_session %}💾 Update Session{% else %}💾 Save Session{% endif %}
+      </button>
       <div id="saveMsg" class="save-msg"></div>
     </div>
   </div>
 </div>
+
 <script>
   const CHALLENGE_ID = {% if challenge %}"{{ challenge.id }}"{% else %}null{% endif %};
+  const RESUME_SESSION_ID = {% if resume_session %}"{{ resume_session.id }}"{% else %}null{% endif %};
+  const RESUME_TIME_SPENT = {% if resume_session %}{{ resume_session.time_spent }}{% else %}0{% endif %};
 </script>
 <script src="{{ url_for('static', filename='js/practice.js') }}"></script>
 {% endblock %}

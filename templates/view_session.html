@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}{{ s.topic }} — CodeTrack{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h2>{{ s.topic }}</h2>
+    <div style="display:flex; gap:0.75rem;">
+      {% if s.status != 'Completed' %}
+      <a href="{{ url_for('main.resume_session', sid=s.id) }}" class="btn-primary">▶ Resume Session</a>
+      {% endif %}
+      <a href="{{ url_for('main.dashboard') }}" class="btn-outline">← Dashboard</a>
+    </div>
+  </div>
+
+  <div class="view-grid">
+    <div class="view-meta">
+      <div class="meta-card">
+        <div class="meta-row">
+          <span class="meta-label">Challenge</span>
+          <span>{{ s.challenge_title or '—' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Difficulty</span>
+          <span class="badge badge-{{ s.difficulty|lower }}">{{ s.difficulty }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Status</span>
+          <span class="status-badge status-{{ s.status|lower|replace(' ','_') }}">{{ s.status }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Time Spent</span>
+          <span>{{ s.time_spent }} min</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Created</span>
+          <span>{{ s.created_at[:10] }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Last Updated</span>
+          <span>{{ s.updated_at[:10] }}</span>
+        </div>
+      </div>
+      {% if s.notes %}
+      <div class="notes-card">
+        <div class="meta-label" style="margin-bottom:0.5rem">📝 Notes</div>
+        <p>{{ s.notes }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="view-code">
+      <div class="editor-toolbar">
+        <span class="editor-label">Your Code</span>
+      </div>
+      <pre class="code-view">{{ s.code or '# No code saved for this session.' }}</pre>
+    </div>
+  </div>
+</div>
+{% endblock %}

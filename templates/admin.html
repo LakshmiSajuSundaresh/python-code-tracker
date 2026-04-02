@@ -7,10 +7,9 @@
     <span class="badge badge-admin">Admin</span>
   </div>
 
-  <!-- Add Challenge Form -->
   <div class="section">
     <h3 class="section-title">➕ Add New Challenge</h3>
-    <form method="POST" action="{{ url_for('add_challenge') }}" class="admin-form">
+    <form method="POST" action="{{ url_for('main.add_challenge') }}" class="admin-form">
       <div class="form-row">
         <div class="form-group">
           <label>Title</label>
@@ -37,7 +36,6 @@
     </form>
   </div>
 
-  <!-- Existing Challenges -->
   <div class="section">
     <h3 class="section-title">📋 All Challenges ({{ challenges|length }})</h3>
     {% if challenges %}
@@ -53,7 +51,7 @@
             <td><span class="badge badge-{{ c.difficulty|lower }}">{{ c.difficulty }}</span></td>
             <td>{{ c.description[:80] }}...</td>
             <td>
-              <form method="POST" action="{{ url_for('delete_challenge', cid=c.id) }}" onsubmit="return confirm('Delete this challenge?')">
+              <form method="POST" action="{{ url_for('main.delete_challenge_route', cid=c.id) }}" onsubmit="return confirm('Delete this challenge?')">
                 <button type="submit" class="btn-delete">✕ Delete</button>
               </form>
             </td>
@@ -67,7 +65,6 @@
     {% endif %}
   </div>
 
-  <!-- Users -->
   <div class="section">
     <h3 class="section-title">👥 Registered Users ({{ users|length }})</h3>
     {% if users %}

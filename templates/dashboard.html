@@ -4,7 +4,7 @@
 <div class="page-container">
   <div class="page-header">
     <h2>Welcome back, <span class="highlight">{{ session.username }}</span> 👋</h2>
-    <a href="{{ url_for('practice') }}" class="btn-primary">+ New Session</a>
+    <a href="{{ url_for('main.practice') }}" class="btn-primary">+ New Session</a>
   </div>
 
   <div class="stats-grid">
@@ -37,7 +37,7 @@
           <span class="badge badge-{{ c.difficulty|lower }}">{{ c.difficulty }}</span>
         </div>
         <p class="challenge-desc">{{ c.description[:100] }}{% if c.description|length > 100 %}...{% endif %}</p>
-        <a href="{{ url_for('practice', challenge_id=c.id) }}" class="btn-sm">Start →</a>
+        <a href="{{ url_for('main.practice', challenge_id=c.id) }}" class="btn-sm">Start →</a>
       </div>
       {% endfor %}
     </div>
@@ -57,22 +57,25 @@
             <th>Status</th>
             <th>Time (min)</th>
             <th>Notes</th>
-            <th>Date</th>
-            <th>Delete</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {% for s in sessions %}
           <tr>
-            <td>{{ s.topic }}</td>
+            <td><a href="{{ url_for('main.view_session', sid=s.id) }}" class="session-link">{{ s.topic }}</a></td>
             <td>{{ s.challenge_title or '—' }}</td>
             <td><span class="badge badge-{{ s.difficulty|lower }}">{{ s.difficulty }}</span></td>
             <td><span class="status-badge status-{{ s.status|lower|replace(' ','_') }}">{{ s.status }}</span></td>
             <td>{{ s.time_spent }}</td>
-            <td>{{ s.notes or '—' }}</td>
-            <td>{{ s.created_at[:10] }}</td>
-            <td>
-              <form method="POST" action="{{ url_for('delete_session', sid=s.id) }}" onsubmit="return confirm('Delete this session?')">
+            <td>{{ s.notes[:40] if s.notes else '—' }}{% if s.notes and s.notes|length > 40 %}...{% endif %}</td>
+            <td>{{ s.updated_at[:10] }}</td>
+            <td style="display:flex; gap:0.4rem; align-items:center;">
+              {% if s.status != 'Completed' %}
+              <a href="{{ url_for('main.resume_session', sid=s.id) }}" class="btn-sm">▶ Resume</a>
+              {% endif %}
+              <form method="POST" action="{{ url_for('main.delete_session_route', sid=s.id) }}" onsubmit="return confirm('Delete this session?')">
                 <button type="submit" class="btn-delete">✕</button>
               </form>
             </td>
@@ -83,7 +86,7 @@
     </div>
     {% else %}
     <div class="empty-state">
-      <p>No sessions yet. <a href="{{ url_for('practice') }}">Start your first practice!</a></p>
+      <p>No sessions yet. <a href="{{ url_for('main.practice') }}">Start your first practice!</a></p>
     </div>
     {% endif %}
   </div>
