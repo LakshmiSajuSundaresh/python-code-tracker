@@ -1,6 +1,10 @@
 import pytest
 import sys, os
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Set DB to a temp path before importing app
+os.environ['TESTING'] = '1'
 
 from app import app
 from models.db import init_db
@@ -9,10 +13,15 @@ from models.db import init_db
 def client():
     app.config['TESTING'] = True
     app.config['SECRET_KEY'] = 'test_secret'
+    # Use a temp database for tests
+    import models.db as db_module
+    db_module.DB = '/tmp/test_tracker.db'
     with app.test_client() as client:
-        with app.app_context():
-            init_db()
+        init_db()
         yield client
+    # Cleanup
+    if os.path.exists('/tmp/test_tracker.db'):
+        os.remove('/tmp/test_tracker.db')
 
 def test_login_page_loads(client):
     res = client.get('/login')
@@ -27,14 +36,12 @@ def test_dashboard_redirects_if_not_logged_in(client):
     assert res.status_code == 302
 
 def test_register_and_login(client):
-    # Register
     res = client.post('/register', data={
         'username': 'testuser123',
         'password': 'testpass123'
     }, follow_redirects=True)
     assert res.status_code == 200
 
-    # Login
     res = client.post('/login', data={
         'username': 'testuser123',
         'password': 'testpass123'
