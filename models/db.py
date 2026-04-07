@@ -147,3 +147,25 @@ def get_all_users_with_counts():
     ).fetchall()
     conn.close()
     return users
+
+def get_all_user_activity():
+    conn = get_db()
+    activity = conn.execute("""
+        SELECT 
+            u.username,
+            c.title as challenge_title,
+            c.difficulty,
+            s.status,
+            s.time_spent,
+            s.updated_at,
+            s.code,
+            s.id as session_id
+        FROM sessions s
+        JOIN users u ON s.user_id = u.id
+        JOIN challenges c ON s.challenge_id = c.id
+        WHERE u.is_admin = 0
+        AND s.challenge_id IS NOT NULL
+        ORDER BY s.updated_at DESC
+    """).fetchall()
+    conn.close()
+    return activity

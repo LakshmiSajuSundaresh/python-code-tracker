@@ -8,23 +8,23 @@
   </div>
 
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num">{{ stats.total or 0 }}</div>
-      <div class="stat-label">Total Sessions</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ completed.cnt or 0 }}</div>
-      <div class="stat-label">Completed</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ stats.total_time or 0 }}<span class="stat-unit">min</span></div>
-      <div class="stat-label">Time Practiced</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ challenges|length }}</div>
-      <div class="stat-label">Challenges Available</div>
-    </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ stats.total or 0 }}</div>
+    <div class="stat-label">Total Sessions</div>
   </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ completed.cnt or 0 }}</div>
+    <div class="stat-label">Completed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ ((stats.total_time or 0) // 60) }}<span class="stat-unit">m</span> {{ ((stats.total_time or 0) % 60) }}<span class="stat-unit">s</span></div>
+    <div class="stat-label">Time Practiced</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ challenges|length }}</div>
+    <div class="stat-label">Challenges Available</div>
+  </div>
+</div>
 
   {% if challenges %}
   <div class="section">
@@ -68,7 +68,7 @@
             <td>{{ s.challenge_title or '—' }}</td>
             <td><span class="badge badge-{{ s.difficulty|lower }}">{{ s.difficulty }}</span></td>
             <td><span class="status-badge status-{{ s.status|lower|replace(' ','_') }}">{{ s.status }}</span></td>
-            <td>{{ s.time_spent }}</td>
+            <td>{{ s.time_spent // 60 }}m {{ s.time_spent % 60 }}s</td>
             <td>{{ s.notes[:40] if s.notes else '—' }}{% if s.notes and s.notes|length > 40 %}...{% endif %}</td>
             <td>{{ s.updated_at[:10] }}</td>
             <td style="display:flex; gap:0.4rem; align-items:center;">

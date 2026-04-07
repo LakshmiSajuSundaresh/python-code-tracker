@@ -71,7 +71,7 @@
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
-          <tr><th>Username</th><th>Sessions Logged</th></tr>
+          <tr><th>Username</th><th>Total Sessions</th></tr>
         </thead>
         <tbody>
           {% for u in users %}
@@ -87,5 +87,84 @@
     <div class="empty-state"><p>No users registered yet.</p></div>
     {% endif %}
   </div>
+
+  <div class="section">
+    <h3 class="section-title">📊 User Activity on Challenges</h3>
+    {% if activity %}
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Challenge</th>
+            <th>Difficulty</th>
+            <th>Status</th>
+            <th>Time Spent</th>
+            <th>Last Updated</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in activity %}
+          <tr>
+            <td><strong>{{ a.username }}</strong></td>
+            <td>{{ a.challenge_title }}</td>
+            <td><span class="badge badge-{{ a.difficulty|lower }}">{{ a.difficulty }}</span></td>
+            <td><span class="status-badge status-{{ a.status|lower|replace(' ','_') }}">{{ a.status }}</span></td>
+            <td>{{ a.time_spent // 60 }}m {{ a.time_spent % 60 }}s</td>
+            <td>{{ a.updated_at[:10] }}</td>
+            <td>
+              {% if a.status == 'Completed' %}
+              <button class="btn-sm" onclick="viewSolution('{{ a.username }}', '{{ a.challenge_title }}', this)"
+                data-code="{{ a.code | e }}">
+                👁 View
+              </button>
+              {% else %}
+              <span style="color: var(--muted); font-size:0.8rem;">Not completed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state"><p>No challenge activity yet.</p></div>
+    {% endif %}
+  </div>
+
+<!-- Solution Modal -->
+<div id="solutionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; width:90%; max-width:700px; max-height:80vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <div>
+        <h3 id="modalTitle" style="font-size:1rem; font-weight:700;"></h3>
+        <p id="modalUser" style="font-size:0.85rem; color:var(--muted);"></p>
+      </div>
+      <button onclick="closeModal()" class="btn-delete">✕ Close</button>
+    </div>
+    <div class="output-label">Solution Code</div>
+    <pre id="modalCode" class="code-view" style="min-height:200px;"></pre>
+  </div>
+</div>
+
+<script>
+function viewSolution(username, challenge, btn) {
+  const code = btn.getAttribute('data-code');
+  document.getElementById('modalTitle').textContent = challenge;
+  document.getElementById('modalUser').textContent = 'Submitted by: ' + username;
+  document.getElementById('modalCode').textContent = code || '# No code saved.';
+  const modal = document.getElementById('solutionModal');
+  modal.style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('solutionModal').style.display = 'none';
+}
+window.addEventListener('click', function(e) {
+  const modal = document.getElementById('solutionModal');
+  if (e.target === modal) closeModal();
+});
+</script>
+
 </div>
 {% endblock %}

@@ -19,7 +19,7 @@
 
   {% if resume_session %}
   <div class="resume-banner">
-    ▶ Resuming: <strong>{{ resume_session.topic }}</strong> — timer continues from where you left off ({{ resume_session.time_spent }} min already logged)
+    ▶ Resuming: <strong>{{ resume_session.topic }}</strong> — timer continues from where you left off
   </div>
   {% endif %}
 
@@ -34,6 +34,14 @@ print("Hello, CodeTrack!"){% endif %}</textarea>
       <div class="output-panel">
         <div class="output-label">Output</div>
         <pre id="output" class="output-box">Run your code to see output here...</pre>
+        <div id="inputArea" style="display:none;" class="input-area">
+          <div class="input-label">⌨ Your program needs input:</div>
+          <div class="input-prompt-text" id="inputPromptText"></div>
+          <div class="input-row">
+            <input type="text" id="userInput" class="input-box" placeholder="Type your input and press Enter..."/>
+            <button id="submitInput" class="btn-run">Submit</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -47,9 +55,9 @@ print("Hello, CodeTrack!"){% endif %}</textarea>
       <div class="form-group">
         <label>Difficulty</label>
         <select id="difficulty">
-          <option value="Easy" {% if resume_session and resume_session.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
-          <option value="Medium" {% if not resume_session or resume_session.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
-          <option value="Hard" {% if resume_session and resume_session.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+          <option value="Easy" {% if resume_session and resume_session.difficulty == 'Easy' %}selected{% elif not resume_session and challenge and challenge.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+          <option value="Medium" {% if resume_session and resume_session.difficulty == 'Medium' %}selected{% elif not resume_session and challenge and challenge.difficulty == 'Medium' %}selected{% elif not resume_session and not challenge %}selected{% endif %}>Medium</option>
+          <option value="Hard" {% if resume_session and resume_session.difficulty == 'Hard' %}selected{% elif not resume_session and challenge and challenge.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
         </select>
       </div>
       <div class="form-group">

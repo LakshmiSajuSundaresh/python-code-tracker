@@ -92,10 +92,15 @@ def run_code():
     if 'user_id' not in session:
         return jsonify({'error': 'Not logged in'}), 401
     code = request.json.get('code', '')
+    inputs = request.json.get('inputs', [])
+    stdin_data = '\n'.join(inputs) + '\n' if inputs else ''
     try:
         result = subprocess.run(
             [sys.executable, '-c', code],
-            capture_output=True, text=True, timeout=10
+            input=stdin_data,
+            capture_output=True,
+            text=True,
+            timeout=10
         )
         output = result.stdout or result.stderr or '(no output)'
     except subprocess.TimeoutExpired:
@@ -142,13 +147,21 @@ def delete_session_route(sid):
     return redirect(url_for('main.dashboard'))
 
 # --- ADMIN ---
+from models.db import (
+    get_user_by_username, create_user,
+    get_all_challenges, get_challenge_by_id, create_challenge, delete_challenge,
+    get_user_sessions, get_session_by_id, create_session, update_session,
+    delete_session, get_user_stats, get_all_users_with_counts, get_all_user_activity
+)
+
 @main.route('/admin')
 def admin_dashboard():
     if not session.get('is_admin'):
         return redirect(url_for('main.login'))
     challenges = get_all_challenges()
     users = get_all_users_with_counts()
-    return render_template('admin.html', challenges=challenges, users=users)
+    activity = get_all_user_activity()
+    return render_template('admin.html', challenges=challenges, users=users, activity=activity)
 
 @main.route('/admin/add_challenge', methods=['POST'])
 def add_challenge():

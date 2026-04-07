@@ -29,7 +29,7 @@
         </div>
         <div class="meta-row">
           <span class="meta-label">Time Spent</span>
-          <span>{{ s.time_spent }} min</span>
+          <span>{{ s.time_spent // 60 }}m {{ s.time_spent % 60 }}s</span>
         </div>
         <div class="meta-row">
           <span class="meta-label">Created</span>
